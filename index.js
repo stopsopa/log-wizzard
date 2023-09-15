@@ -79,7 +79,7 @@ const th = thBuilder();
     const help = `
 
 /**
- *  Help: http://jfksldjf
+ *  Help: https://stopsopa.github.io/log-wizzard/
  */`;
 
     const content = fs.readFileSync(__filename, "utf8").toString();
@@ -102,6 +102,9 @@ const th = thBuilder();
 
 if (args.get("help")) {
   console.log(`
+
+    homepage: https://stopsopa.github.io/log-wizzard/
+    
     log-wizzard:
         simple tool accepting output on stdin in the commonly 
         used JSON Log Format and formatting it to human readable format
