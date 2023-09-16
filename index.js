@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const readline = require("readline");
 
 const path = require("path");
@@ -282,10 +284,7 @@ rl.on("line", (line) => {
 });
 
 function buildFormatRestBuilder({ type }) {
-  return function formatRestBuilder({
-    firstIndent = 4,
-    consecutiveIndent = 2,
-  }) {
+  return function formatRestBuilder({ firstIndent = 4, consecutiveIndent = 2 }) {
     let buff = "";
 
     let limit = 10;
