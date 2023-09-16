@@ -65,7 +65,19 @@ const thBuilder = (name) => (msg) => new Error(`log-wizzard ${name ? `[${name}] 
 const th = thBuilder();
 
 {
-  let gen = args.get("gen");
+  const allowedArguments = ["help", "formatter", "debug", "generate"];
+
+  const keys = Object.keys(args.all());
+
+  keys.forEach((key) => {
+    if (!allowedArguments.includes(key)) {
+      throw th(`argument --${key} is not allowed, allowed are >${allowedArguments.join(", ")}< run --help to see how to use this tool`);
+    }
+  });
+}
+
+{
+  let gen = args.get("generate");
 
   if (gen) {
     if (gen === true) {
