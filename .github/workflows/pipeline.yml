@@ -49,4 +49,7 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
-        timeout-minutes: 1
+        with:
+          error_count: 3
+          # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-of-onworkflow_callsecrets
+          # https://github.com/actions/deploy-pages#inputs-
