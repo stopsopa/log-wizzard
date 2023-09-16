@@ -24,5 +24,7 @@ echo "{}" > package.json
 
 yarn add showdown
 
+ls -la
+
 cat README.md | node node_modules/.bin/showdown makehtml > index.html
 
