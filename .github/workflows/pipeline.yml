@@ -27,6 +27,9 @@ jobs:
       - name: Build
         run: /bin/bash .github/sha384.sh
 
+      - name: Generate index.html
+        run: cat README.md | npx showdown makehtml > index.html
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
