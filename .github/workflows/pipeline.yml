@@ -2,7 +2,7 @@ name: Pipeline
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
   # trigger only for master and PR, commits to branches will be ignored
   # if you wan't to trigger ci/cd for branch then just create PR
