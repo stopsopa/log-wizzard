@@ -455,7 +455,11 @@ function formatterBuilder({ timeFormatter, flipColors, formatRestBuilder, color:
     /**
      * Reordering
      */
-    const { stack_trace, ...final } = rest;
+    const { stack_trace, message, ...final } = rest;
+    
+    if (typeof message !== "undefined") {
+      final.message = message;
+    }
 
     if (typeof stack_trace !== "undefined") {
       final.stack_trace = stack_trace;
