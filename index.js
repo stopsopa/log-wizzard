@@ -6,8 +6,6 @@ const path = require("path");
 
 const fs = require("fs");
 
-const log = console.log;
-
 const args = (function (obj, tmp) {
   process.argv.slice(2).map((a) => {
     if (a.indexOf("--") === 0) {
