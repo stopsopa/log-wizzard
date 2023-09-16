@@ -26,5 +26,5 @@ yarn add showdown
 
 ls -la
 
-cat README.md | node node_modules/.bin/showdown makehtml > index.html
+node node_modules/.bin/showdown makehtml < README.md > index.html
 
