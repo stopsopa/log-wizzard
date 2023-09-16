@@ -8,6 +8,26 @@ It was create in one evening, just simple utility tool for job at hand so please
 
 # installation
 
+## for user
+
+```
+
+wget --help 1> /dev/null 2> /dev/null
+if [ "$?" = "0" ]; then
+    sudo wget --no-cache -O "/usr/local/bin/log-wizzard.cjs" "https://stopsopa.github.io/log-wizzard/index.js"
+else # curl
+    sudo curl "https://stopsopa.github.io/log-wizzard/index.js" -o "/usr/local/bin/log-wizzard.cjs"
+fi
+
+sudo chmod a+x /usr/local/bin/log-wizzard.cjs
+
+log-wizzard.cjs --help
+
+```
+
+
+## per project
+
 ```
 
 wget --help 1> /dev/null 2> /dev/null

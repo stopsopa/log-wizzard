@@ -102,7 +102,6 @@ const th = thBuilder();
 
 if (args.get("help")) {
   console.log(`
-
     homepage: https://stopsopa.github.io/log-wizzard/
     
     log-wizzard:
