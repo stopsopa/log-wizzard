@@ -52,25 +52,25 @@ node .git/log-wizzard.cjs --help
 
       [`log-wizzard`]: {
         command: `
-set -e
 # HOW TO CONFIG: https://i.imgur.com/Hv9Dk7T.png
 # USE PATH: /Users/xxxx/Workspace/xxxx/.git/debug.log
 DEBUG=".git/debug.log"
-set -x
 
-if [ ! -f ".git/log-wizzard.cjs" ]; then
-  wget --help 1> /dev/null 2> /dev/null
-  if [ "$?" = "0" ]; then
-      wget --no-cache -O ".git/log-wizzard.cjs" "https://stopsopa.github.io/log-wizzard/index.js"
-  else # curl
-      curl "https://stopsopa.github.io/log-wizzard/index.js" -o ".git/log-wizzard.cjs"
-  fi
+log-wizzard.cjs --help 2> /dev/null > /dev/null
+if [ "\${?}" != "0" ]; then
+  cat <<EEE
+  
+    log-wizzard not installed, follow: https://stopsopa.github.io/log-wizzard/
+    
+EEE
+  exit 1  
 fi
 
-tail -n 400 -f "\${DEBUG}" | node .git/log-wizzard.cjs   
+tail -n 4000 -f "\${DEBUG}" | log-wizzard.cjs   
 `,
         confirm: false,
       },
+
 
 ```
 
