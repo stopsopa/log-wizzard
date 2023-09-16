@@ -18,10 +18,14 @@ if [ "$?" = "0" ]; then
 else # curl
     sudo curl "https://stopsopa.github.io/log-wizzard/index.js" -o "/usr/local/bin/log-wizzard.cjs"
 fi
-
-sudo chmod a+x /usr/local/bin/log-wizzard.cjs
-
-log-wizzard.cjs --help
+if [ "$(printf "sha384-$(sudo cat ".git/list-relative-branches.sh" | openssl dgst -sha384 -binary | base64)")" = "sha384::log-wizzard.cjs" ]; then
+  echo "checksum verified"
+  sudo chmod a+x /usr/local/bin/log-wizzard.cjs
+  log-wizzard.cjs --help
+else
+  echo "checksum corrupted - deleting file"
+  sudo rm "/usr/local/bin/log-wizzard.cjs"
+fi
 
 ```
 
