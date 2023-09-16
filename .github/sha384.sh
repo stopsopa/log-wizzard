@@ -52,11 +52,11 @@ FIND="${FIND//\\$'\n'/}"
 # or capture result
 LIST="$(eval "${FIND}")" 
 
-LIST=$(cat <<END
-${LIST}
-${ROOT}/index.html
-END
-)
+# LIST=$(cat <<END
+# ${LIST}
+# ${ROOT}/index.html
+# END
+# )
 
 cat <<EEE
 
@@ -66,7 +66,7 @@ EEE
 
 while read -r FILE
 do
-echo "${0} found: ${FILE}"
+echo "${0}: found: ${FILE}"
 done <<< "${LIST}"
 
 MATCHING=()

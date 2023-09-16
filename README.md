@@ -18,7 +18,7 @@ if [ "$?" = "0" ]; then
 else # curl
     sudo curl "https://stopsopa.github.io/log-wizzard/index.js" -o "/usr/local/bin/log-wizzard.cjs"
 fi
-if [ "$(printf "sha384-$(sudo cat ".git/list-relative-branches.sh" | openssl dgst -sha384 -binary | base64)")" = "sha384::log-wizzard.cjs" ]; then
+if [ "$(printf "sha384-$(sudo cat "/usr/local/bin/log-wizzard.cjs" | openssl dgst -sha384 -binary | base64)")" = "sha384.sh::index.js" ]; then
   echo "checksum verified"
   sudo chmod a+x /usr/local/bin/log-wizzard.cjs
   log-wizzard.cjs --help
