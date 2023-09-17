@@ -14,17 +14,17 @@ It was create in one evening, just simple utility tool for job at hand so please
 
 wget --help 1> /dev/null 2> /dev/null
 if [ "$?" = "0" ]; then
-    sudo wget --no-cache -O "/usr/local/bin/log-wizzard.cjs" "https://stopsopa.github.io/log-wizzard/index.js"
+    sudo wget --no-cache -O "/usr/local/bin/log-wizzard" "https://stopsopa.github.io/log-wizzard/index.js"
 else # curl
-    sudo curl "https://stopsopa.github.io/log-wizzard/index.js" -o "/usr/local/bin/log-wizzard.cjs"
+    sudo curl "https://stopsopa.github.io/log-wizzard/index.js" -o "/usr/local/bin/log-wizzard"
 fi
-if [ "$(printf "sha384-$(sudo cat "/usr/local/bin/log-wizzard.cjs" | openssl dgst -sha384 -binary | base64)")" = "sha384.sh::index.js" ]; then
+if [ "$(printf "sha384-$(sudo cat "/usr/local/bin/log-wizzard" | openssl dgst -sha384 -binary | base64)")" = "sha384.sh::index.js" ]; then
   echo "checksum verified"
-  sudo chmod a+x /usr/local/bin/log-wizzard.cjs
-  log-wizzard.cjs --help
+  sudo chmod a+x /usr/local/bin/log-wizzard
+  log-wizzard --help
 else
   echo "checksum corrupted - deleting file"
-  sudo rm "/usr/local/bin/log-wizzard.cjs"
+  sudo rm "/usr/local/bin/log-wizzard"
 fi
 
 ```
@@ -56,7 +56,7 @@ node .git/log-wizzard.cjs --help
 # USE PATH: /Users/xxxx/Workspace/xxxx/.git/debug.log
 DEBUG=".git/debug.log"
 
-log-wizzard.cjs --help 2> /dev/null > /dev/null
+log-wizzard --help 2> /dev/null > /dev/null
 if [ "\${?}" != "0" ]; then
   cat <<EEE
   
@@ -66,7 +66,7 @@ EEE
   exit 1  
 fi
 
-tail -n 4000 -f "\${DEBUG}" | log-wizzard.cjs   
+tail -n 4000 -f "\${DEBUG}" | log-wizzard   
 `,
         confirm: false,
       },
@@ -85,7 +85,7 @@ tail -n 4000 -f "\${DEBUG}" | log-wizzard.cjs
 
 
 
-cat <<EEE | node .git/log-wizzard.cjs
+cat <<EEE | node index.js
   .   ____          _            __ _ _
  /\\\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \ 
 ( ( )\___ | '_ | '_| | '_ \/ _' | \ \ \ \ 
