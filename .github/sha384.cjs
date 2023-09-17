@@ -1,7 +1,7 @@
 /**
  * This script is for use from sha384.sh
  *
- * it works with just one file, but sha384 is responsible for finding all
+ * it works with just one file, but sha384.sh is responsible for finding all
  * and driving them through this script
  */
 const fs = require("fs");
