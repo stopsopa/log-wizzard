@@ -102,7 +102,7 @@ Added properties source 'json.HOSTS_CONFIG_PATH' with highest priority
 EEE
 
 
-cat <<EEE | node log-wizzard --debug
+cat <<EEE | log-wizzard --debug
   .   ____          _            __ _ _
  /\\\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \ 
 ( ( )\___ | '_ | '_| | '_ \/ _' | \ \ \ \ 
