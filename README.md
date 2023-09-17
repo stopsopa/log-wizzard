@@ -1,5 +1,8 @@
 # github link
 [https://github.com/stopsopa/log-wizzard](https://github.com/stopsopa/log-wizzard)
+
+
+[https://stopsopa.github.io/log-wizzard/](https://stopsopa.github.io/log-wizzard/)
 # spring boot log formatter
 
 I've tried to use pino-pretty library but there was a problem with clearning java stack in the log to make it more readable so I just made this library.
@@ -7,6 +10,8 @@ I've tried to use pino-pretty library but there was a problem with clearning jav
 It was create in one evening and later tweaked here and there. It's just simple utility tool for job at hand so please forgive me if you find it ugly.
 
 # installation
+
+Got to [https://stopsopa.github.io/log-wizzard/](https://stopsopa.github.io/log-wizzard/) for prepared installation sequences with valid checksums
 
 ## for user
 
@@ -39,8 +44,13 @@ if [ "$?" = "0" ]; then
 else # curl
     curl "https://stopsopa.github.io/log-wizzard/index.js" -o ".git/log-wizzard.cjs"
 fi
-
-node .git/log-wizzard.cjs --help
+if [ "$(printf "sha384-$(sudo cat ".git/log-wizzard.cjs" | openssl dgst -sha384 -binary | base64)")" = "sha384.sh::index.js" ]; then
+  echo "checksum verified"
+  node ".git/log-wizzard.cjs" --help
+else
+  echo "checksum corrupted - deleting file"
+  rm ".git/log-wizzard.cjs"
+fi
 
 ```
 
