@@ -649,7 +649,8 @@ if (args.get("help")) {
         --help              - this help page
         --formatter <file>  - alternative formatter module
         --debug             - prints some more informations when troubleshooting
-        --generate [file]   - generate config for tweaking in path.resolve(process.cwd(), '.git', 'formatter.cjs') by default
+        --generate [file]   - generate default formatter config for tweaking 
+                              default location will be in .git/formatter.cjs if value for --generate not specified
 `);
 
   process.exit(0);
