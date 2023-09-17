@@ -649,7 +649,7 @@ if (args.get("help")) {
         --help              - this help page
         --formatter <file>  - alternative formatter module
         --debug             - prints some more informations when troubleshooting
-        --generate [file]   - generate config for tweaking in path.resolve(process.cwd(), 'formatter.cjs') by default
+        --generate [file]   - generate config for tweaking in path.resolve(process.cwd(), '.git', 'formatter.cjs') by default
 `);
 
   process.exit(0);
