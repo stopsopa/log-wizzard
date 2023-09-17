@@ -6,6 +6,267 @@ const path = require("path");
 
 const fs = require("fs");
 
+const os = require("os");
+
+const { spawn } = require("child_process");
+
+const cmd = (function () {
+  const th = (msg) => new Error(`cmd.js error: ${msg}`);
+
+  return (cmd, opt) =>
+    new Promise((resolve, reject) => {
+      if (typeof cmd === "string") {
+        cmd = cmd.trim();
+
+        if (!cmd) {
+          throw th(`cmd is an empty string`);
+        }
+
+        cmd = cmd.split(/\s+/);
+      }
+
+      if (!Array.isArray(cmd)) {
+        throw th(`cmd is not an array`);
+      }
+
+      if (!cmd.length) {
+        throw th(`cmd is an empty array`);
+      }
+
+      const { verbose = false } = { ...opt };
+
+      verbose && console.log(`executing command ${cmd.join(" ")}`);
+
+      const [command, ...args] = cmd;
+
+      const process = spawn(command, args);
+
+      let stdout = "";
+
+      let stderr = "";
+
+      process.stdout.on("data", (data) => {
+        stdout += String(data);
+      });
+
+      process.stderr.on("data", (data) => {
+        stderr += String(data);
+      });
+
+      process.on("error", (e) => {
+        verbose && console.log(`error: ${e.message}`);
+
+        reject({
+          cmd,
+          stdout,
+          stderr,
+          e,
+        });
+      });
+
+      process.on("close", (code) => {
+        verbose && console.log(`child process ${cmd.join(" ")} exited with code ${code}`);
+
+        if (code !== 0) {
+          return reject({
+            cmd,
+            stdout,
+            stderr,
+            code,
+          });
+        }
+
+        resolve({
+          cmd,
+          stdout,
+          stderr,
+          code,
+        });
+      });
+    });
+})();
+
+const preparePerlParserBuilder = function () {
+  const th = (msg) => new Error(`perl.js error: ${msg}`);
+
+  const buff = {};
+
+  const perlScriptBody = `#!/usr/bin/perl
+  
+  use strict;
+  use warnings;
+  use Encode;  # Import the Encode module for character encoding conversions
+  
+  # Check if a file path argument was provided
+  if (scalar(@ARGV) != 1) {
+      die "log-wizzard.perl error: Usage: $0 <file_path>\\n";
+  }
+  
+  my $file_path = $ARGV[0];
+  
+  # Check if the specified file exists
+  if (!-e $file_path) {
+      die "log-wizzard.perl error: File '$file_path' does not exist.\\n";
+  }
+  
+  # Open the script file with UTF-8 encoding for reading
+  open(my $script_fh, '<:encoding(UTF-8)', $file_path) or die "Cannot open file: $!";
+  
+  # Read the entire file into a single UTF-8 encoded string
+  my $file_content;
+  {
+      local $/;  # Slurp mode
+      $file_content = <$script_fh>;
+  }
+  
+  close($script_fh);
+  
+  # my $pattern = qr/\\\{(?:[^{}]|(?R))*\\\}/;
+  
+  my $pattern = qr/
+      \\\{              # { character
+          (?:         # non-capturing group
+              [^{}]   # anything that is not a { or }
+              |       # OR
+              (?R)    # recurses the entire pattern
+          )*          # previous group zero or more times
+      \\\}              # } character
+  /x;
+  
+  # Use the 'm//' operator to find all matches in the $file_content
+  while ($file_content =~ /$pattern/g) {
+      my $start = $-[0];  # Start position of the match
+      my $end = $+[0];    # End position of the match (exclusive)
+      
+      
+      # Extract the matched substring and decode it from UTF-8
+      my $matched_text = substr($file_content, $start, $end - $start);
+      $matched_text = decode('UTF-8', $matched_text);
+      
+      print "$start,$end\\n";
+  }
+`;
+
+  function isDir(directory) {
+    try {
+      return fs.lstatSync(directory).isDirectory();
+    } catch (e) {}
+    return false;
+  }
+
+  const directory = path.resolve(os.homedir(), "log-wizzard");
+
+  if (!isDir(directory)) {
+    fs.mkdirSync(directory);
+
+    if (!isDir(directory)) {
+      throw th(`Can't create directrory >${directory}<`);
+    }
+  }
+
+  const perlScript = path.resolve(directory, `log-wizzard.perl`);
+
+  if (!fs.existsSync(perlScript)) {
+    fs.writeFileSync(perlScript, perlScriptBody);
+  }
+
+  const tmpFile = path.resolve(directory, `log-wizzard.tmp`);
+
+  async function perlParserBuilder() {
+    try {
+      const version = await cmd([`perl`, `--version`]);
+
+      /**
+       * Current version:
+       * This is perl 5, version 30, subversion 3 (v5.30.3) built for darwin-thread-multi-2level
+       */
+      buff.perlVersion = version.stdout;
+
+      return async function perl(string) {
+        try {
+          fs.writeFileSync(tmpFile, string);
+
+          const version = await cmd([`perl`, perlScript, tmpFile]);
+
+          return version.stdout;
+        } catch (e) {
+          throw th(`runtime catch: ${e}`);
+        }
+      };
+    } catch (e) {
+      throw th(`builder phase catch: ${e}`);
+    }
+  }
+
+  perlParserBuilder.getBuff = () => buff;
+
+  return perlParserBuilder;
+};
+
+async function perlStringReplacerBuilder() {
+  // https://www.appsloveworld.com/php/17/find-json-strings-in-a-string
+  // https://regex101.com/r/U6szh5/1
+
+  function replaceArray(arr, startIndex, endIndex, replaceArr) {
+    return [...arr.slice(0, startIndex), ...replaceArr, ...arr.slice(endIndex)];
+  }
+
+  function combine(str, collection) {
+    collection.reverse();
+
+    let c;
+    for (let i = 0; i < collection.length; i += 1) {
+      c = collection[i];
+
+      str = replaceArray(str, c.start, c.end, JSON.stringify(c.obj, null, 4));
+    }
+
+    return str;
+  }
+
+  const perlParserBuilder = await preparePerlParserBuilder();
+
+  const perl = await perlParserBuilder();
+
+  return async function findJson(string) {
+    const parts = await perl(string);
+
+    const table = parts
+      .split("\n")
+      .map((t) => t.trim())
+      .filter(Boolean)
+      .map((row) => row.split(",").map((r) => parseInt(r, 10)));
+
+    const collection = [];
+
+    const s = [...string];
+
+    const l = table.length;
+
+    let t;
+
+    let slice;
+
+    for (let i = 0; i < l; i += 1) {
+      t = table[i];
+
+      slice = s.slice(t[0], t[1]).join("");
+
+      try {
+        const obj = JSON.parse(slice);
+
+        collection.push({
+          start: t[0],
+          end: t[1],
+          obj,
+        });
+      } catch (e) {}
+    }
+
+    return combine(s, collection).join("");
+  };
+}
+
 const args = (function (obj, tmp) {
   process.argv.slice(2).map((a) => {
     if (a.indexOf("--") === 0) {
@@ -71,7 +332,11 @@ const th = thBuilder();
 
   keys.forEach((key) => {
     if (!allowedArguments.includes(key)) {
-      throw th(`argument --${key} is not allowed, allowed are >${allowedArguments.join(", ")}< run --help to see how to use this tool`);
+      throw th(
+        `argument --${key} is not allowed, allowed are >${allowedArguments.join(
+          ", "
+        )}< run --help to see how to use this tool`
+      );
     }
   });
 }
@@ -189,10 +454,6 @@ if (formatterFile) {
   }
 }
 
-const rl = readline.createInterface({
-  input: process.stdin,
-});
-
 const tools = {
   color,
   timeFormatter: (function () {
@@ -266,31 +527,47 @@ const tools = {
 
     return n.constructor ? n.constructor.name : t;
   },
+  getPerlFormatter: async function () {
+    const perlFormatter = await perlStringReplacerBuilder();
+
+    return perlFormatter;
+  },
 };
 
 tools.formatRestBuilder = buildFormatRestBuilder(tools);
 
-const formatter = formatterBuilderFunction(tools);
+/**
+ * Main logic is here
+ */
+(async function () {
+  const formatter = await formatterBuilderFunction(tools);
 
-let i = 0;
-rl.on("line", (line) => {
-  i += 1;
+  const rl = readline.createInterface({
+    input: process.stdin,
+  });
 
-  try {
-    const obj = JSON.parse(line);
+  let i = 0;
+  rl.on("line", async (line) => {
+    i += 1;
 
-    if (isObject(obj)) {
-      process.stdout.write(formatter(obj));
+    try {
+      const obj = JSON.parse(line);
 
-      return;
+      if (isObject(obj)) {
+        const formatted = await formatter(obj);
+
+        process.stdout.write(formatted);
+
+        return;
+      }
+    } catch (e) {
+      if (debug) {
+        process.stdout.write(`json parsing error on line: ${i}: ${e} \n`);
+      }
     }
-  } catch (e) {
-    if (debug) {
-      process.stdout.write(`json parsing error on line: ${i}: ${e} \n`);
-    }
-  }
-  process.stdout.write(`${line}\n`);
-});
+    process.stdout.write(`${line}\n`);
+  });
+})();
 
 function buildFormatRestBuilder({ type }) {
   return function formatRestBuilder({ firstIndent = 4, consecutiveIndent = 2 }) {
@@ -404,7 +681,7 @@ function toString(o, k) {
  * File from this mark will be cut to the end to genereate custom configuration
  */
 /***/
-function formatterBuilder({ timeFormatter, flipColors, formatRestBuilder, color: c }) {
+async function formatterBuilder({ timeFormatter, flipColors, formatRestBuilder, color: c, getPerlFormatter }) {
   // see more colors: https://imgur.com/bawTURW
   const LEVELS = {
     FATAL: { level: 60, color: c.BgRed },
@@ -423,7 +700,9 @@ function formatterBuilder({ timeFormatter, flipColors, formatRestBuilder, color:
     // consecutiveIndent: 2,
   });
 
-  return function formatter(row) {
+  // const perlFormatter = await getPerlFormatter();
+
+  return async function formatter(row) {
     let { timestamp, level, ...rest } = row;
 
     const time = timeFormatter(timestamp);
@@ -455,8 +734,8 @@ function formatterBuilder({ timeFormatter, flipColors, formatRestBuilder, color:
     /**
      * Reordering
      */
-    const { stack_trace, message, ...final } = rest;
-    
+    const { stack_trace, message, jsoninjson, ...final } = rest;
+
     if (typeof message !== "undefined") {
       final.message = message;
     }
@@ -464,6 +743,10 @@ function formatterBuilder({ timeFormatter, flipColors, formatRestBuilder, color:
     if (typeof stack_trace !== "undefined") {
       final.stack_trace = stack_trace;
     }
+
+    // if (typeof jsoninjson === "string") {
+    //   final.jsoninjson = await perlFormatter(jsoninjson);
+    // }
 
     return `
 ${time} ${color}${level}(${levelLabel}${color})${c.reset}:    
