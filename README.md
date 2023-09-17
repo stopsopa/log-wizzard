@@ -66,7 +66,7 @@ EEE
   exit 1  
 fi
 
-tail -n 4000 -f "\${DEBUG}" | log-wizzard   
+tail -n 4000 -f "\${DEBUG}" | log-wizzard --formatter .git/formatter.cjs
 `,
         confirm: false,
       },
