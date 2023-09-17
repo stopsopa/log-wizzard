@@ -353,9 +353,7 @@ const th = thBuilder();
       throw th(`file >${gen}< already exist`);
     }
 
-    const help = `
-
-/**
+    const help = `/**
  *  Help: https://stopsopa.github.io/log-wizzard/
  */`;
 
