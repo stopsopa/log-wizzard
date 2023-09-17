@@ -444,7 +444,9 @@ const preparePerlParserBuilder = function () {
         try {
           fs.writeFileSync(tmpFile, string);
 
-          const version = await cmd([`perl`, perlScript, tmpFile]);
+          const version = await cmd([`perl`, perlScript, tmpFile], {
+            verbose: debug,
+          });
 
           return version.stdout;
         } catch (e) {
@@ -805,7 +807,9 @@ tools.formatRestBuilder = buildFormatRestBuilder(tools);
   });
 
   let i = 0;
-  rl.on("line", async (line) => {
+
+  for await (const line of rl) {
+    // async fixed thank to : https://stackoverflow.com/a/54269197
     i += 1;
 
     try {
@@ -824,7 +828,7 @@ tools.formatRestBuilder = buildFormatRestBuilder(tools);
       }
     }
     process.stdout.write(`${line}\n`);
-  });
+  }
 })();
 
 function buildFormatRestBuilder({ type }) {
