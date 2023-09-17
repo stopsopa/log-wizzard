@@ -10,15 +10,14 @@ const os = require("os");
 
 const { spawn } = require("child_process");
 
+/**
+ * based on modified: https://github.com/douglascrockford/JSON-js/blob/master/json2.js
+ */
 const compactToJson = (function () {
-  /**
-   * based on modified: https://github.com/douglascrockford/JSON-js/blob/master/json2.js
-   */
   "use strict";
 
   function isObject(a) {
-    // return (!!a) && (a.constructor === Object);
-    return Object.prototype.toString.call(a) === "[object Object]"; // better in node.js to dealing with RowDataPacket object
+    return !!a && a.constructor === Object;
   }
 
   var rx_escapable =
