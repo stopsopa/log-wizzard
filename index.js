@@ -1012,7 +1012,7 @@ async function formatterBuilder({ timeFormatter, flipColors, formatRestBuilder, 
     }
 
     return `
-${time} ${color}${level}(${levelLabel}${color})${c.reset}:    
+${time} ${color}${level}(${levelLabel}${color})${c.reset}: ${timestamp}
 ${formatRest(final)}`;
   };
 }
