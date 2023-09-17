@@ -30,5 +30,7 @@ set -x
 
 node node_modules/.bin/showdown --help
 
-node node_modules/.bin/showdown makehtml < README.md > index.html
+node node_modules/.bin/showdown makehtml --help
+
+node node_modules/.bin/showdown makehtml -i README.md -o index.html
 
