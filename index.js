@@ -742,9 +742,10 @@ async function formatterBuilder({ timeFormatter, flipColors, formatRestBuilder, 
       final.stack_trace = stack_trace;
     }
 
-    // if (typeof jsoninjson === "string") {
-    //   final.jsoninjson = await perlFormatter(jsoninjson);
-    // }
+    if (typeof message === "string") {
+      final.message = message;
+      // final.message = await perlFormatter(message.replace(/\\\"/g, '"'));
+    }
 
     return `
 ${time} ${color}${level}(${levelLabel}${color})${c.reset}:    
