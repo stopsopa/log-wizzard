@@ -20,7 +20,7 @@ else # curl
 fi
 if [ "$(printf "sha384-$(sudo cat "/usr/local/bin/log-wizzard" | openssl dgst -sha384 -binary | base64)")" = "sha384.sh::index.js" ]; then
   echo "checksum verified"
-  sudo chmod a+x /usr/local/bin/log-wizzard
+  sudo chmod +x /usr/local/bin/log-wizzard
   log-wizzard --help
 else
   echo "checksum corrupted - deleting file"
