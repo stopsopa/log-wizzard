@@ -346,7 +346,7 @@ const th = thBuilder();
 
   if (gen) {
     if (gen === true) {
-      gen = "formatter.cjs";
+      gen = ".git/formatter.cjs";
     }
 
     if (fs.existsSync(gen)) {
