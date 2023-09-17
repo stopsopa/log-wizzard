@@ -2,9 +2,9 @@
 [https://github.com/stopsopa/log-wizzard](https://github.com/stopsopa/log-wizzard)
 # spring boot log formatter
 
-I've tried to use pino-pretty library but I had a problem with clearning java stack in the log to make it more readable so I just made this library in one evening.
+I've tried to use pino-pretty library but there was a problem with clearning java stack in the log to make it more readable so I just made this library.
 
-It was create in one evening, just simple utility tool for job at hand so please forgive me ...
+It was create in one evening and later tweaked here and there. It's just simple utility tool for job at hand so please forgive me if you find it ugly.
 
 # installation
 
