@@ -992,7 +992,7 @@ async function formatterBuilder({ timeFormatter, flipColors, formatRestBuilder, 
     /**
      * Reordering
      */
-    const { stack_trace, message, jsoninjson, ...final } = rest;
+    const { stack_trace, message, ...final } = rest;
 
     if (typeof message !== "undefined") {
       final.message = message;
