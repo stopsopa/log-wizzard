@@ -818,8 +818,6 @@ tools.formatRestBuilder = buildFormatRestBuilder(tools);
 
       if (isObject(obj)) {
         formatted = await formatter(obj);
-
-        process.stdout.write(formatted);
       }
     } catch (e) {
       if (debug) {
