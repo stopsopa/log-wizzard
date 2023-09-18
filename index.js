@@ -1010,8 +1010,8 @@ async function formatterBuilder({ timeFormatter, flipColors, formatRestBuilder, 
       // final.message = await perlFormatter(message.replace(/\\\"/g, '"'));
     }
 
-    return `
-${time} ${color}${level}(${levelLabel}${color})${c.reset}: ${timestamp}
-${formatRest(final)}`;
+    return `${time} ${color}${level}(${levelLabel}${color})${c.reset}: ${timestamp}
+${formatRest(final)}
+`;
   };
 }
