@@ -811,23 +811,22 @@ tools.formatRestBuilder = buildFormatRestBuilder(tools);
   for await (const line of rl) {
     // async fixed thank to : https://stackoverflow.com/a/54269197
     i += 1;
+    let formatted = `${line}\n`;
 
     try {
       const obj = JSON.parse(line);
 
       if (isObject(obj)) {
-        const formatted = await formatter(obj);
+        formatted = await formatter(obj);
 
         process.stdout.write(formatted);
-
-        return;
       }
     } catch (e) {
       if (debug) {
         process.stdout.write(`json parsing error on line: ${i}: ${e} \n`);
       }
     }
-    process.stdout.write(`${line}\n`);
+    process.stdout.write(formatted);
   }
 })();
 
