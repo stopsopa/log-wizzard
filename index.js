@@ -1005,6 +1005,7 @@ async function formatterBuilder({ timeFormatter, flipColors, formatRestBuilder, 
 
     if (typeof message === "string") {
       final.message = message;
+      // final.message = await perlFormatter(message);
       // final.message = await perlFormatter(message.replace(/\\\"/g, '"'));
     }
 
