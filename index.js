@@ -959,7 +959,7 @@ async function formatterBuilder({ timeFormatter, flipColors, formatRestBuilder, 
     // consecutiveIndent: 2,
   });
 
-  // const perlFormatter = await getPerlFormatter();
+  const perlFormatter = await getPerlFormatter();
 
   return async function formatter(row) {
     let { timestamp, level, ...rest } = row;
@@ -1004,8 +1004,8 @@ async function formatterBuilder({ timeFormatter, flipColors, formatRestBuilder, 
     }
 
     if (typeof message === "string") {
-      final.message = message;
-      // final.message = await perlFormatter(message);
+      //final.message = message;
+      final.message = await perlFormatter(message);
       // final.message = await perlFormatter(message.replace(/\\\"/g, '"'));
     }
 
