@@ -38,7 +38,3 @@ awk 'FNR==NR {B = B $0 ORS; next} /%%/ {sub("%%", B)} 1' index-raw.html .github/
 
 rm -rf index-raw.html
 
-ls -la
-
-ls -la .github/
-

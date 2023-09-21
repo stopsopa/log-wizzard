@@ -5,7 +5,7 @@
 [https://stopsopa.github.io/log-wizzard/](https://stopsopa.github.io/log-wizzard/)
 
 
-# Why? & What?
+# Why? &amp; What?
 
 It's the simple spring boot log formatter.
 
