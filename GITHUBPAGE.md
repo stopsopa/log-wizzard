@@ -17,7 +17,7 @@ It was created in one evening and later tweaked here and there. It's just simple
 
 # The idea
 
-The idea is to setup IDE (in this case IntelliJ) to stream server stdout of the springboot (also) to file. (for our example .git/debug.log)
+The idea is to setup IDE to stream server stdout of the springboot to file.
 
 and then in the IDE terminal use simple command ...
 
@@ -30,9 +30,11 @@ tail -f -n 1000 .git/debug | log-wizzard
 
 ... to format it and see it updating live
 
+## IntelliJ setup
 ![IntelliJ.jpg](IntelliJ.jpg)
 
-For the purpose of example above in the image here describing the process of configurying IntelliJ in point 3 just setup absolute path to location .git/debug.log in your project.
+For the purpose of this example in the step 3 set .git/debug.log - ABSOLUTE PATH - unfortunately it seems IntelliJ doesn't understand relative path in ths field.
+
 
 ## for system user
 
