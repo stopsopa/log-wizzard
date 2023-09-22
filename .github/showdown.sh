@@ -32,7 +32,7 @@ node node_modules/.bin/showdown --help
 
 node node_modules/.bin/showdown makehtml --help
 
-node node_modules/.bin/showdown makehtml -i README.md -o index-raw.html
+node node_modules/.bin/showdown makehtml -i GITHUBPAGE.md -o index-raw.html
 
 awk 'FNR==NR {B = B $0 ORS; next} /%%/ {sub("%%", B)} 1' index-raw.html .github/showdown.html > index.html
 
