@@ -41,7 +41,7 @@ cd "${ROOT}"
 
 S="\\"
 FIND="$(cat <<EOF
-find "${ROOT}" -type f -name "*.md"
+find . -type f -name "*.md"
 EOF
 )"
 

@@ -5,7 +5,7 @@
 [https://stopsopa.github.io/log-wizzard/](https://stopsopa.github.io/log-wizzard/)
 
 
-# Why? and What?
+# Why? & What?
 
 It's the simple spring boot log formatter.
 
@@ -25,6 +25,7 @@ and then in the IDE terminal use simple command ...
 
 tail -f -n 1000 .git/debug | log-wizzard
 
+
 ```
 
 ... to format it and see it updating live
@@ -33,11 +34,7 @@ tail -f -n 1000 .git/debug | log-wizzard
 
 For the purpose of example above in the image here describing the process of configurying IntelliJ in point 3 just setup absolute path to location .git/debug.log in your project.
 
-# installation
-
-Got to [https://stopsopa.github.io/log-wizzard/](https://stopsopa.github.io/log-wizzard/) for prepared installation sequences with valid checksums
-
-## for user
+## for system user
 
 ```
 
