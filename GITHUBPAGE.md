@@ -17,7 +17,7 @@ It was created in one evening and later tweaked here and there. It's just simple
 
 # The idea
 
-The idea is to setup IDE to stream server stdout of the springboot to file.
+The idea is to setup IDE to stream server stdout of the springboot to file.  (Don't worry server stdout will be still visible in od "Run" or "Debug" tab in IntelliJ where it is normally)
 
 and then in the IDE terminal use simple command ...
 
