@@ -802,6 +802,10 @@ tools.formatRestBuilder = buildFormatRestBuilder(tools);
 (async function () {
   const formatter = await formatterBuilderFunction(tools);
 
+  if (formatter.lineFormatter === undefined) {
+    throw th(`formatter object doesn't have lineFormatter method`);
+  }
+
   const rl = readline.createInterface({
     input: process.stdin,
   });
@@ -814,10 +818,12 @@ tools.formatRestBuilder = buildFormatRestBuilder(tools);
     let formatted = `${line}\n`;
 
     try {
-      const obj = JSON.parse(line);
+      const lineProcessed = await formatter.prepareLine(line);
+
+      const obj = JSON.parse(lineProcessed);
 
       if (isObject(obj)) {
-        formatted = await formatter(obj);
+        formatted = await formatter.lineFormatter(obj);
       }
     } catch (e) {
       if (debug) {
@@ -961,56 +967,75 @@ async function formatterBuilder({ timeFormatter, flipColors, formatRestBuilder, 
 
   const perlFormatter = await getPerlFormatter();
 
-  return async function formatter(row) {
-    let { timestamp, level, ...rest } = row;
+  return {
+    lineFormatter: async function formatter(row) {
+      let { timestamp, level, ...rest } = row;
 
-    const time = timeFormatter(timestamp);
+      const time = timeFormatter(timestamp);
 
-    let levelLabel = "";
+      let levelLabel = "";
 
-    let color;
+      let color;
 
-    if (level) {
-      if (typeof level === "string") {
-        levelLabel = level.toUpperCase();
+      if (level) {
+        if (typeof level === "string") {
+          levelLabel = level.toUpperCase();
 
-        color = LEVELS[levelLabel]?.color;
-      }
+          color = LEVELS[levelLabel]?.color;
+        }
 
-      if (Number.isInteger(level)) {
-        color = FLIP[level]?.color;
+        if (Number.isInteger(level)) {
+          color = FLIP[level]?.color;
 
-        if (FLIP[level]) {
-          levelLabel = FLIP[level].level;
+          if (FLIP[level]) {
+            levelLabel = FLIP[level].level;
+          }
         }
       }
-    }
 
-    if (!color) {
-      color = LEVELS.DEFAULT.color;
-    }
+      if (!color) {
+        color = LEVELS.DEFAULT.color;
+      }
 
-    /**
-     * Reordering
-     */
-    const { stack_trace, message, ...final } = rest;
+      /**
+       * Reordering
+       */
+      const { stack_trace, message, ...final } = rest;
 
-    if (typeof message !== "undefined") {
-      final.message = message;
-    }
+      if (typeof message !== "undefined") {
+        final.message = message;
+      }
 
-    if (typeof stack_trace !== "undefined") {
-      final.stack_trace = stack_trace;
-    }
+      if (typeof stack_trace !== "undefined") {
+        final.stack_trace = stack_trace;
+      }
 
-    if (typeof message === "string") {
-      //final.message = message;
-      final.message = await perlFormatter(message);
-      // final.message = await perlFormatter(message.replace(/\\\"/g, '"'));
-    }
+      if (typeof message === "string") {
+        //final.message = message;
+        final.message = await perlFormatter(message);
+        // final.message = await perlFormatter(message.replace(/\\\"/g, '"'));
+      }
 
-    return `${time} ${color}${level}(${levelLabel}${color})${c.reset}: ${timestamp}
-${formatRest(final)}
-`;
+      return `${time} ${color}${level}(${levelLabel}${color})${c.reset}: ${timestamp}
+  ${formatRest(final)}
+  `;
+    },
+    prepareLine: async function (line) {
+      // cut [665] {..json}
+      // to return
+      // {..json}
+      try {
+        var reg = /^\[\d+\] (.*)$/g;
+        if (line.match(reg)) {
+          const string = line.replace(reg, "$1");
+
+          return string;
+        } else {
+          return line;
+        }
+      } catch (e) {
+        return line;
+      }
+    },
   };
 }
