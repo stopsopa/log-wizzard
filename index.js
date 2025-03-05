@@ -967,6 +967,20 @@ async function formatterBuilder({ timeFormatter, flipColors, formatRestBuilder, 
 
   const perlFormatter = await getPerlFormatter();
 
+  function replaceBraces(obj) {
+    if (typeof obj === 'string') {
+      return obj.replace(/{/g, '%7B');
+    } else if (Array.isArray(obj)) {
+      return obj.map(replaceBraces);
+    } else if (typeof obj === 'object' && obj !== null) {
+      return Object.keys(obj).reduce((acc, key) => {
+        acc[key] = replaceBraces(obj[key]);
+        return acc;
+      }, {});
+    }
+    return obj;
+  }
+
   return {
     lineFormatter: async function formatter(row) {
       let { timestamp, level, ...rest } = row;
@@ -1021,9 +1035,14 @@ async function formatterBuilder({ timeFormatter, flipColors, formatRestBuilder, 
   `;
     },
     prepareLine: async function (line) {
-      // cut [665] {..json}
-      // to return
-      // {..json}
+      try {
+
+        const obj = JSON.parse(line);
+
+        return JSON.stringify(replaceBraces(obj));
+      }
+      catch (e) {}
+      
       try {
         var reg = /^\[\d+\] (.*)$/g;
         if (line.match(reg)) {
@@ -1039,3 +1058,6 @@ async function formatterBuilder({ timeFormatter, flipColors, formatRestBuilder, 
     },
   };
 }
+
+
+
